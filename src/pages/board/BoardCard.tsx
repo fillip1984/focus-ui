@@ -1,25 +1,20 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { MouseEvent } from "react";
-import { BsTrash } from "react-icons/bs";
-import { Link } from "react-router-dom";
-import { deleteBoardById } from "../../services/BoardServices";
+import { Dispatch, MouseEvent } from "react";
+import { BsPencil, BsTrash } from "react-icons/bs";
+import { Link, useNavigate } from "react-router-dom";
+import { BoardActionType, BoardReducerType } from "../../reducers/BoardReducer";
 import { Board } from "../../Types";
 
 interface BoardCardProps {
   board: Board;
+  boardDispatch: Dispatch<BoardReducerType>;
 }
-const BoardCard = ({ board }: BoardCardProps) => {
-  const queryClient = useQueryClient();
-  const { mutate: deleteBoardByIdMutator } = useMutation(deleteBoardById, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["boards"]);
-    },
-  });
+const BoardCard = ({ board, boardDispatch }: BoardCardProps) => {
+  const navigate = useNavigate();
 
-  const handleDelete = (e: MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
+  const handleEdit = (e: MouseEvent<HTMLButtonElement>) => {
+    // side stepping: <a> cannot appear as a descendant of <a>
     e.preventDefault();
-    deleteBoardByIdMutator(board.id);
+    navigate(`/boards/${board.id}/detail`);
   };
 
   return (
@@ -29,12 +24,26 @@ const BoardCard = ({ board }: BoardCardProps) => {
       <h3>{board.name}</h3>
       <div className="flex flex-1 flex-col justify-between">
         <span>{board.description}</span>
-        <button
-          type="button"
-          onClick={handleDelete}
-          className="ml-auto flex justify-end transition duration-150 hover:text-red-400">
-          <BsTrash className="text-xl " />
-        </button>
+        <div className="actions ml-auto flex gap-2 text-2xl">
+          <button
+            type="button"
+            onClick={(e) => handleEdit(e)}
+            className="transition duration-150 hover:text-green-600">
+            <BsPencil />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              boardDispatch({
+                type: BoardActionType.RemoveBoard,
+                payload: board.id,
+              });
+            }}
+            className="transition duration-150 hover:text-red-400">
+            <BsTrash />
+          </button>
+        </div>
       </div>
     </Link>
   );

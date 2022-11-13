@@ -1,26 +1,27 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-import { Board } from "../../Types";
-import { createBoard } from "../../services/BoardServices";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { BoardContext } from "../../contexts/BoardContext";
+import { BoardActionType } from "../../reducers/BoardReducer";
+import { Board, generateId } from "../../Types";
 
 const BoardDetail = () => {
+  const { boards, boardDispatch } = useContext(BoardContext);
+  const { id } = useParams();
+  const isNew = id && id === "new";
+  const [board, setBoard] = useState<Board>();
+
+  // loads in an empty board or existing board's details
+  useEffect(() => {
+    if (isNew) {
+      setBoard({ id: generateId(), name: "", description: "" } as Board);
+    } else {
+      const boardId = Number(id);
+      setBoard(boards.find((board) => board.id === boardId));
+    }
+  }, [isNew, id]);
+
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-
-  const {
-    data: board,
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery<Board>(["boards"], () => {
-    return {
-      name: "",
-      description: "",
-    } as Board;
-  });
-
-  const { mutate: createBoardMutator } = useMutation(createBoard);
 
   const {
     register,
@@ -28,12 +29,19 @@ const BoardDetail = () => {
     formState: { errors },
   } = useForm<Board>();
   const onSubmit: SubmitHandler<Board> = (formData) => {
-    createBoardMutator(formData, {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["boards"]);
-        navigate("/boards");
-      },
-    });
+    if (isNew) {
+      boardDispatch({
+        type: BoardActionType.AddBoard,
+        payload: { ...formData, id: generateId() },
+      });
+    } else {
+      boardDispatch({
+        type: BoardActionType.UpdateBoard,
+        payload: { id: Number(id), fieldsToUpdate: formData },
+      });
+    }
+
+    navigate("/boards");
   };
 
   return (
@@ -63,6 +71,7 @@ const BoardDetail = () => {
             className="mt-1 block w-full rounded text-black focus:border-transparent focus:ring-0"
             id="name"
             type="text"
+            defaultValue={board?.name}
             autoFocus
             {...register("name", {
               required: "Field is required",
@@ -88,6 +97,7 @@ const BoardDetail = () => {
           <textarea
             className="mt-1 block w-full rounded text-black focus:border-transparent focus:ring-0"
             rows={4}
+            defaultValue={board?.description}
             {...register("description", {
               required: "Field is required",
               minLength: {
@@ -105,22 +115,6 @@ const BoardDetail = () => {
           )}
         </div>
       </form>
-
-      {isLoading && (
-        <div className="loading -m-32 flex h-screen flex-col items-center justify-center text-4xl">
-          Loading...
-        </div>
-      )}
-      {isError && (
-        <div className="error -m-32 flex h-screen flex-col items-center justify-center text-4xl">
-          Error
-          <button
-            className="rounded bg-slate-400 p-4 text-white"
-            onClick={() => refetch()}>
-            Retry
-          </button>
-        </div>
-      )}
     </div>
   );
 };

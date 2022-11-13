@@ -1,45 +1,32 @@
-import { useQuery } from "@tanstack/react-query";
+import { useContext } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { readAllBoards } from "../../services/BoardServices";
+import { BoardContext } from "../../contexts/BoardContext";
 import BoardCard from "./BoardCard";
 
 const BoardList = () => {
-  const {
-    data: boards,
-    isError,
-    isLoading,
-    isFetching,
-    refetch,
-  } = useQuery(["boards"], readAllBoards);
-
+  const { boards, boardDispatch } = useContext(BoardContext);
   return (
     <div className="p-4">
       <div className="flex flex-wrap gap-2">
-        {!isFetching &&
-          boards &&
-          boards?.map((board) => <BoardCard key={board.id} board={board} />)}
+        {boards?.map((board) => (
+          <BoardCard
+            key={board.id}
+            board={board}
+            boardDispatch={boardDispatch}
+          />
+        ))}
       </div>
 
-      {isLoading && (
+      {boards?.length === 0 && (
         <div className="loading -m-32 flex h-screen flex-col items-center justify-center text-4xl">
-          Loading...
-        </div>
-      )}
-      {isError && (
-        <div className="error -m-32 flex h-screen flex-col items-center justify-center text-4xl">
-          Error
-          <button
-            className="rounded bg-slate-400 p-4 text-white"
-            onClick={() => refetch()}>
-            Retry
-          </button>
+          There are no boards
         </div>
       )}
 
       <div className="fab fixed bottom-8 right-8">
         <Link
-          to="/boards/new"
+          to="/boards/new/detail"
           className="flex h-16 w-16 items-center justify-center rounded-full bg-white p-4 text-2xl text-slate-500 hover:shadow hover:shadow-white">
           <BsPlusLg />
         </Link>
