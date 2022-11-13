@@ -1,29 +1,30 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
-import { readBoardById, updateBoard } from "../../services/BoardServices";
+import { useContext, useEffect, useState } from "react";
 import { BsPlusLg } from "react-icons/bs";
-import { useState } from "react";
-import { Bucket } from "../../Types";
+import { useParams } from "react-router-dom";
+import { BoardContext } from "../../contexts/BoardContext";
+import { Board, generateId } from "../../Types";
 
 const BoardPage = () => {
+  const { boards, boardDispatch } = useContext(BoardContext);
   const { id } = useParams();
-  const queryClient = useQueryClient();
+  const isNew = id && id === "new";
+  const [board, setBoard] = useState<Board>();
 
-  const {
-    data: board,
-    isError,
-    isLoading,
-    refetch,
-  } = useQuery(["boards"], () => readBoardById(Number(id)));
-
-  const { mutate: updateBoardMutator } = useMutation(updateBoard);
+  // loads in an empty board or existing board's details
+  useEffect(() => {
+    if (isNew) {
+      setBoard({ id: generateId(), name: "", description: "" } as Board);
+    } else {
+      const boardId = Number(id);
+      setBoard(boards.find((board) => board.id === boardId));
+    }
+  }, [isNew, id]);
 
   const [newBucket, setNewBucket] = useState("");
-
   const [buckets, setBuckets] = useState(board?.buckets);
 
   const handleAddBucket = () => {
-    updateBoardMutator({ ...board });
+    // updateBoardMutator({ ...board });
     // board?.buckets?.push({ name: newBucket } as Bucket);
     setNewBucket("");
   };
@@ -49,22 +50,6 @@ const BoardPage = () => {
           <BsPlusLg />
         </button>
       </div>
-
-      {isLoading && (
-        <div className="loading -m-32 flex h-screen flex-col items-center justify-center text-4xl">
-          Loading...
-        </div>
-      )}
-      {isError && (
-        <div className="error -m-32 flex h-screen flex-col items-center justify-center text-4xl">
-          Error
-          <button
-            className="rounded bg-slate-400 p-4 text-white"
-            onClick={() => refetch()}>
-            Retry
-          </button>
-        </div>
-      )}
     </div>
   );
 };
