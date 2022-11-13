@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { BoardContext } from "../../contexts/BoardContext";
-import BoardCard from "./BoardCard";
+import BoardCard from "../../components/board/BoardCard";
 
 const BoardList = () => {
   const { boards, boardDispatch } = useContext(BoardContext);

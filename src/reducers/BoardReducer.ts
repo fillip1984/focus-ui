@@ -1,10 +1,13 @@
 import { Reducer } from "react";
-import { Board } from "../Types";
+import { Board, Bucket } from "../Types";
 
 export enum BoardActionType {
   AddBoard,
   RemoveBoard,
   UpdateBoard,
+  AddBucket,
+  RemoveBucket,
+  UpdateBucket,
 }
 
 export type BoardReducerType =
@@ -19,6 +22,18 @@ export type BoardReducerType =
   | {
       type: BoardActionType.UpdateBoard;
       payload: { id: number; fieldsToUpdate: Partial<Board> };
+    }
+  | {
+      type: BoardActionType.AddBucket;
+      payload: { boardId: number; bucket: Bucket };
+    }
+  | {
+      type: BoardActionType.RemoveBucket;
+      payload: { boardId: number; bucketId: number };
+    }
+  | {
+      type: BoardActionType.UpdateBucket;
+      payload: { boardId: number; name: string };
     };
 
 const useBoardReducer: Reducer<Board[], BoardReducerType> = (
@@ -34,6 +49,20 @@ const useBoardReducer: Reducer<Board[], BoardReducerType> = (
       return state.map((board) => {
         if (board.id === action.payload.id) {
           return { ...board, ...action.payload.fieldsToUpdate };
+        } else {
+          return board;
+        }
+      });
+    case BoardActionType.AddBucket:
+      return state.map((board) => {
+        if (board.id === action.payload.boardId) {
+          if (!board.buckets) {
+            board.buckets = [];
+          }
+          return {
+            ...board,
+            buckets: [...board.buckets, action.payload.bucket],
+          };
         } else {
           return board;
         }
