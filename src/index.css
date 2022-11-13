@@ -18,4 +18,8 @@
   h4 {
     @apply text-2xl;
   }
+
+  body {
+    @apply bg-slate-500 text-white;
+  }
 }

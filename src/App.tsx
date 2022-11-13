@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import BoardContextProvider from "./contexts/BoardContext";
-import BoardPage from "./pages/board/Board";
+import BoardPage from "./pages/board/BoardPage";
 import BoardDetail from "./pages/board/BoardDetail";
 import BoardList from "./pages/board/BoardList";
 
@@ -10,7 +10,7 @@ const queryClient = new QueryClient();
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="App h-[100vh] bg-slate-500 text-white">
+      <div className="App">
         <Router>
           <BoardContextProvider>
             <Routes>
