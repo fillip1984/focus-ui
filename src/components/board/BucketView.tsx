@@ -43,15 +43,29 @@ const BucketView = ({ bucket, boardId }: BucketProps) => {
     });
   };
 
+  const removeBucketFromBoard = () => {
+    console.log("removing bucket");
+    boardDispatch({
+      type: BoardActionType.RemoveBucket,
+      payload: { boardId, bucketId: bucket.id },
+    });
+  };
+
   return (
     <div className="new-bucket flex w-[350px] flex-col items-center justify-between rounded-lg border border-white p-2">
       <input
         type="text"
-        value={bucket.name}
+        value={bucketName}
         onChange={(e) => setBucketName(e.target.value)}
         onBlur={() => updateBucketName(bucketName)}
         className="w-full border-b-2 border-b-white bg-transparent focus:border-transparent focus:border-b-inherit focus:ring-0"
       />
+      <button
+        type="button"
+        className="hover:text-red-400"
+        onClick={removeBucketFromBoard}>
+        X
+      </button>
 
       <div className="flex w-full flex-col gap-2">
         {bucket.tasks?.map((task) => (

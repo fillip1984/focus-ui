@@ -96,7 +96,13 @@ const useBoardReducer: Reducer<Board[], BoardReducerType> = (
       board.buckets = board?.buckets?.filter(
         (bucket) => bucket.id !== action.payload.bucketId
       );
-      return { ...state, board };
+      return state.map((board) => {
+        if (board.id === action.payload.boardId) {
+          return { ...board, buckets: board.buckets };
+        } else {
+          return board;
+        }
+      });
     }
     case BoardActionType.AddTask: {
       const board = state.find((board) => board.id === action.payload.boardId);
