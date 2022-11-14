@@ -14,7 +14,7 @@ const NewBucket = ({ addBucket }: NewBucketProps) => {
   };
 
   return (
-    <div className="new-bucket flex h-32 w-[350px] flex-col items-center rounded-lg border border-white p-2">
+    <div className="new-bucket ml-6 flex h-32 w-[350px] flex-col items-center rounded-lg border border-white p-2">
       <input
         type="text"
         value={newBucket}

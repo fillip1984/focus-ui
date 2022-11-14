@@ -29,14 +29,7 @@ const BoardPage = () => {
 
   const addBucket = (name: string) => {
     const newBucket = { id: generateId(), name, tasks: [] } as Bucket;
-    // update local state
-    if (buckets) {
-      setBuckets([...buckets, newBucket]);
-    } else {
-      setBuckets([newBucket]);
-    }
 
-    // update context
     boardDispatch({
       type: BoardActionType.AddBucket,
       payload: { boardId: Number(id), bucket: newBucket },
@@ -55,7 +48,7 @@ const BoardPage = () => {
           </div>
           <div className="mt-24 flex h-[80vh] w-[300vw] gap-4 px-2">
             {buckets?.map((bucket) => (
-              <BucketView key={bucket.id} bucket={bucket} />
+              <BucketView key={bucket.id} boardId={board.id} bucket={bucket} />
             ))}
             <NewBucket addBucket={addBucket} />
           </div>

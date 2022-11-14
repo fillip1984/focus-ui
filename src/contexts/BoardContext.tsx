@@ -1,6 +1,6 @@
 import { createContext, Dispatch, ReactNode, useReducer } from "react";
 import useBoardReducer, { BoardReducerType } from "../reducers/BoardReducer";
-import { Board, generateId } from "../Types";
+import { Board } from "../Types";
 
 interface BoardContextProviderProps {
   children: ReactNode;
@@ -25,93 +25,94 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
 
 const sampleData: Board[] = [
   {
-    id: generateId(),
+    id: 1,
     name: "Mind",
     description: "Tasks related to keeping a healthy mind",
     buckets: [
       {
-        id: generateId(),
+        id: 2,
         name: "Todo",
+        tasks: [{ id: 3, name: "this is a test", complete: false }],
       },
       {
-        id: generateId(),
+        id: 4,
         name: "In progress",
       },
       {
-        id: generateId(),
+        id: 5,
         name: "Waiting/blocked",
       },
       {
-        id: generateId(),
+        id: 6,
         name: "Complete",
       },
     ],
   },
   {
-    id: generateId(),
+    id: 7,
     name: "Body",
     description: "Health, exercise, goals to keep a healthy body",
     buckets: [
       {
-        id: generateId(),
+        id: 8,
         name: "Todo",
       },
       {
-        id: generateId(),
+        id: 9,
         name: "In progress",
       },
       {
-        id: generateId(),
+        id: 10,
         name: "Waiting/blocked",
       },
       {
-        id: generateId(),
+        id: 11,
         name: "Complete",
       },
     ],
   },
   {
-    id: generateId(),
+    id: 12,
     name: "Work - team tasks",
     description: "Tasks owned by team",
     buckets: [
       {
-        id: generateId(),
+        id: 13,
         name: "Todo",
       },
       {
-        id: generateId(),
+        id: 14,
         name: "In progress",
       },
       {
-        id: generateId(),
+        id: 15,
         name: "Waiting/blocked",
       },
       {
-        id: generateId(),
+        id: 16,
         name: "Complete",
       },
     ],
   },
   {
-    id: generateId(),
+    id: 17,
     name: "Work - personal tasks",
     description: "My tasks",
     buckets: [
       {
-        id: generateId(),
+        id: 18,
         name: "Todo",
       },
       {
-        id: generateId(),
+        id: 19,
         name: "In progress",
       },
       {
-        id: generateId(),
+        id: 20,
         name: "Waiting/blocked",
       },
       {
-        id: generateId(),
+        id: 21,
         name: "Complete",
       },
     ],
