@@ -15,37 +15,31 @@ const BucketView = ({ bucket, boardId }: BucketProps) => {
 
   const { boardDispatch } = useContext(BoardContext);
 
-  const updateBucketName = (id: number, name: string) => {
+  const updateBucketName = (name: string) => {
     boardDispatch({
       type: BoardActionType.UpdateBucket,
-      payload: { boardId: Number(id), bucketId: id, name },
+      payload: { boardId, bucketId: bucket.id, name },
     });
   };
 
-  const handleAddTask = () => {
-    addTaskToBucket(bucket.id, newTask);
-    setNewTask("");
-  };
-
-  const addTaskToBucket = (bucketId: number, name: string) => {
-    console.log("task genning");
+  const addTaskToBucket = () => {
     const task = {
       id: generateId(),
-      name,
+      name: newTask,
       complete: false,
     } as Task;
 
-    console.log("context updatin");
     boardDispatch({
       type: BoardActionType.AddTask,
-      payload: { boardId, bucketId, task },
+      payload: { boardId, bucketId: bucket.id, task },
     });
+    setNewTask("");
   };
 
-  const removeTaskFromBucket = (bucketId: number, taskId: number) => {
+  const removeTaskFromBucket = (taskId: number) => {
     boardDispatch({
       type: BoardActionType.RemoveTask,
-      payload: { boardId, bucketId, taskId },
+      payload: { boardId, bucketId: bucket.id, taskId },
     });
   };
 
@@ -55,7 +49,7 @@ const BucketView = ({ bucket, boardId }: BucketProps) => {
         type="text"
         value={bucket.name}
         onChange={(e) => setBucketName(e.target.value)}
-        onBlur={() => updateBucketName(bucket.id, bucketName)}
+        onBlur={() => updateBucketName(bucketName)}
         className="w-full border-b-2 border-b-white bg-transparent focus:border-transparent focus:border-b-inherit focus:ring-0"
       />
 
@@ -68,7 +62,7 @@ const BucketView = ({ bucket, boardId }: BucketProps) => {
             <button
               type="button"
               className="hover:text-red-400"
-              onClick={() => removeTaskFromBucket(bucket.id, task.id)}>
+              onClick={() => removeTaskFromBucket(task.id)}>
               X
             </button>
           </div>
@@ -83,7 +77,7 @@ const BucketView = ({ bucket, boardId }: BucketProps) => {
           onChange={(e) => setNewTask(e.target.value)}
         />
         <button
-          onClick={handleAddTask}
+          onClick={addTaskToBucket}
           type="button"
           className="h-8 w-8 rounded border border-white text-2xl">
           <BsPlus />
