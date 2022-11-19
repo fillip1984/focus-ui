@@ -13,7 +13,7 @@ const BucketView = ({ bucket, boardId }: BucketProps) => {
   const [bucketName, setBucketName] = useState(bucket.name);
   const [newTask, setNewTask] = useState("");
 
-  const { boardDispatch } = useContext(BoardContext);
+  const { boards } = useContext(BoardContext);
 
   const updateBucketName = (name: string) => {
     boardDispatch({

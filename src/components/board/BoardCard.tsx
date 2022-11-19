@@ -1,14 +1,13 @@
-import { Dispatch, MouseEvent } from "react";
+import { MouseEvent } from "react";
 import { BsPencil, BsTrash } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
-import { BoardActionType, BoardReducerType } from "../../reducers/BoardReducer";
 import { Board } from "../../Types";
 
 interface BoardCardProps {
   board: Board;
-  boardDispatch: Dispatch<BoardReducerType>;
+  removeBoard: (id: number) => void;
 }
-const BoardCard = ({ board, boardDispatch }: BoardCardProps) => {
+const BoardCard = ({ board, removeBoard }: BoardCardProps) => {
   const navigate = useNavigate();
 
   const handleEdit = (e: MouseEvent<HTMLButtonElement>) => {
@@ -35,10 +34,7 @@ const BoardCard = ({ board, boardDispatch }: BoardCardProps) => {
             type="button"
             onClick={(e) => {
               e.preventDefault();
-              boardDispatch({
-                type: BoardActionType.RemoveBoard,
-                payload: board.id,
-              });
+              removeBoard(board.id);
             }}
             className="transition duration-150 hover:text-red-400">
             <BsTrash />

@@ -1,20 +1,16 @@
 import { useContext } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { BoardContext } from "../../contexts/BoardContext";
 import BoardCard from "../../components/board/BoardCard";
+import { BoardContext } from "../../contexts/BoardContext";
 
 const BoardList = () => {
-  const { boards, boardDispatch } = useContext(BoardContext);
+  const { boards, removeBoard } = useContext(BoardContext);
   return (
     <div className="p-4">
       <div className="flex flex-wrap gap-2">
         {boards?.map((board) => (
-          <BoardCard
-            key={board.id}
-            board={board}
-            boardDispatch={boardDispatch}
-          />
+          <BoardCard key={board.id} board={board} removeBoard={removeBoard} />
         ))}
       </div>
 

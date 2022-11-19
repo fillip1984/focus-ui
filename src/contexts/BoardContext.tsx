@@ -1,23 +1,42 @@
-import { createContext, Dispatch, ReactNode, useReducer } from "react";
-import useBoardReducer, { BoardReducerType } from "../reducers/BoardReducer";
+import { createContext, ReactNode, useState } from "react";
 import { Board } from "../Types";
 
 interface BoardContextProviderProps {
   children: ReactNode;
 }
 
-interface BoardContextType {
-  boards: Board[];
-  boardDispatch: Dispatch<BoardReducerType>;
+interface BoardContextProps {
+  boards: Board[] | null;
+  addBoard: (board: Board) => void;
+  removeBoard: (id: number) => void;
+  updateBoard: (id: number, fieldsToUpdate: Partial<Board>) => void;
 }
 
-export const BoardContext = createContext({} as BoardContextType);
+export const BoardContext = createContext({} as BoardContextProps);
 
 const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
-  const [boards, boardDispatch] = useReducer(useBoardReducer, sampleData);
+  const [boards, setBoards] = useState(sampleData);
+
+  const addBoard = (board: Board) => setBoards([...boards, board]);
+
+  const removeBoard = (id: number) =>
+    setBoards(boards.filter((board) => board.id !== id));
+
+  const updateBoard = (id: number, fieldsToUpdate: Partial<Board>) => {
+    setBoards(
+      boards.map((board) => {
+        if (board.id === id) {
+          return { ...board, ...fieldsToUpdate };
+        } else {
+          return board;
+        }
+      })
+    );
+  };
 
   return (
-    <BoardContext.Provider value={{ boards, boardDispatch }}>
+    <BoardContext.Provider
+      value={{ boards, addBoard, removeBoard, updateBoard }}>
       {children}
     </BoardContext.Provider>
   );

@@ -1,25 +1,22 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Input from "../../components/form/Input";
 import { BoardContext } from "../../contexts/BoardContext";
-import { BoardActionType } from "../../reducers/BoardReducer";
 import { Board, generateId } from "../../Types";
 
 const BoardDetail = () => {
-  const { boards, boardDispatch } = useContext(BoardContext);
+  const { boards, addBoard, updateBoard } = useContext(BoardContext);
   const { id } = useParams();
   const isNew = id && id === "new";
-  const [board, setBoard] = useState<Board>();
-
-  // loads in an empty board or existing board's details
-  useEffect(() => {
-    if (isNew) {
-      setBoard({ id: generateId(), name: "", description: "" } as Board);
-    } else {
-      const boardId = Number(id);
-      setBoard(boards.find((board) => board.id === boardId));
-    }
-  }, [isNew, id]);
+  // We can use useState to set state but for now I'm using the defaultValues from react-hook-form
+  // const [board] = useState<Board>(
+  //   isNew
+  //     ? { id: Number(id), name: "", description: "" }
+  //     : (boards?.find(
+  //         (existingBoard) => existingBoard.id === Number(id)
+  //       ) as Board)
+  // );
 
   const navigate = useNavigate();
 
@@ -27,18 +24,23 @@ const BoardDetail = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Board>();
+  } = useForm<Board>({
+    defaultValues: {
+      name: isNew
+        ? ""
+        : boards?.find((existingBoard) => existingBoard.id === Number(id))
+            ?.name,
+      description: isNew
+        ? ""
+        : boards?.find((existingBoard) => existingBoard.id === Number(id))
+            ?.description,
+    },
+  });
   const onSubmit: SubmitHandler<Board> = (formData) => {
     if (isNew) {
-      boardDispatch({
-        type: BoardActionType.AddBoard,
-        payload: { ...formData, id: generateId() },
-      });
+      addBoard({ ...formData, id: generateId() });
     } else {
-      boardDispatch({
-        type: BoardActionType.UpdateBoard,
-        payload: { id: Number(id), fieldsToUpdate: formData },
-      });
+      updateBoard(Number(id), formData);
     }
 
     navigate("/boards");
@@ -63,6 +65,8 @@ const BoardDetail = () => {
         id="board-form"
         className="flex w-full flex-col gap-4 p-4 md:mx-auto md:max-w-md lg:max-w-lg"
         onSubmit={handleSubmit(onSubmit)}>
+        {/* <Input name="name" type="text" error={errors.name?.message} autoFocus /> */}
+
         <div>
           <label htmlFor="name" className="text-2xl">
             Name
@@ -71,7 +75,7 @@ const BoardDetail = () => {
             className="mt-1 block w-full rounded text-black focus:border-transparent focus:ring-0"
             id="name"
             type="text"
-            defaultValue={board?.name}
+            // defaultValue={board?.name}
             autoFocus
             {...register("name", {
               required: "Field is required",
@@ -97,7 +101,7 @@ const BoardDetail = () => {
           <textarea
             className="mt-1 block w-full rounded text-black focus:border-transparent focus:ring-0"
             rows={4}
-            defaultValue={board?.description}
+            // defaultValue={board?.description}
             {...register("description", {
               required: "Field is required",
               minLength: {
