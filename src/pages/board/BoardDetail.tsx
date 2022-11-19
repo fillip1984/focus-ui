@@ -25,8 +25,8 @@ const BoardDetail = () => {
     formState: { errors },
   } = useForm<Board>({
     defaultValues: {
-      name: isNew ? "" : findBoardById(Number(id))?.name,
-      description: isNew ? "" : findBoardById(Number(id))?.description,
+      name: isNew ? "" : findBoardById(id)?.name,
+      description: isNew ? "" : findBoardById(id)?.description,
     },
   });
   const onSubmit: SubmitHandler<Board> = (formData) => {

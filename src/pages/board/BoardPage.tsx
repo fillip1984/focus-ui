@@ -1,38 +1,20 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { BsArrowLeft } from "react-icons/bs";
 
 import { Link, useParams } from "react-router-dom";
 import BucketView from "../../components/board/BucketView";
 import NewBucket from "../../components/board/NewBucket";
 import { BoardContext } from "../../contexts/BoardContext";
-import { Board, Bucket, generateId } from "../../Types";
+import { generateId } from "../../Types";
 
 const BoardPage = () => {
-  const { boards } = useContext(BoardContext);
+  const { findBoardById, addBucket } = useContext(BoardContext);
   const { id } = useParams();
-  const isNew = id && id === "new";
-  const [board, setBoard] = useState<Board>();
-  const [buckets, setBuckets] = useState<Bucket[]>();
+  const board = findBoardById(id);
 
-  // loads in an empty board or existing board's details
-  useEffect(() => {
-    if (isNew) {
-      setBoard({ id: generateId(), name: "", description: "" } as Board);
-    } else {
-      const boardId = Number(id);
-      const existingBoard = boards?.find((board) => board.id === boardId);
-      setBoard(existingBoard);
-      setBuckets(existingBoard?.buckets);
-    }
-  }, [isNew, id]);
-
-  const addBucket = (name: string) => {
-    const newBucket = { id: generateId(), name, tasks: [] } as Bucket;
-
-    // boardDispatch({
-    //   type: BoardActionType.AddBucket,
-    //   payload: { boardId: Number(id), bucket: newBucket },
-    // });
+  const handleAddBucket = (name: string) => {
+    const newBucket = { id: generateId(), name, tasks: [] };
+    addBucket(Number(id), newBucket);
   };
 
   return (
@@ -46,10 +28,10 @@ const BoardPage = () => {
             </Link>
           </div>
           <div className="mt-24 flex h-[80vh] w-[300vw] gap-4 px-2">
-            {buckets?.map((bucket) => (
+            {board.buckets?.map((bucket) => (
               <BucketView key={bucket.id} boardId={board.id} bucket={bucket} />
             ))}
-            <NewBucket addBucket={addBucket} />
+            <NewBucket handleAddBucket={handleAddBucket} />
           </div>
         </div>
       )}

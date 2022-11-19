@@ -2,14 +2,14 @@ import { useState } from "react";
 import { BsPlusLg } from "react-icons/bs";
 
 interface NewBucketProps {
-  addBucket: (name: string) => void;
+  handleAddBucket: (name: string) => void;
 }
 
-const NewBucket = ({ addBucket }: NewBucketProps) => {
+const NewBucket = ({ handleAddBucket }: NewBucketProps) => {
   const [newBucket, setNewBucket] = useState("");
 
-  const handleAddBucket = () => {
-    addBucket(newBucket);
+  const handleAddBucketClick = () => {
+    handleAddBucket(newBucket);
     setNewBucket("");
   };
 
@@ -24,7 +24,7 @@ const NewBucket = ({ addBucket }: NewBucketProps) => {
       />
       <button
         type="button"
-        onClick={handleAddBucket}
+        onClick={handleAddBucketClick}
         className="mt-4 flex w-full justify-center p-2 text-2xl">
         <BsPlusLg />
       </button>
