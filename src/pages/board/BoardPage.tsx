@@ -5,11 +5,10 @@ import { Link, useParams } from "react-router-dom";
 import BucketView from "../../components/board/BucketView";
 import NewBucket from "../../components/board/NewBucket";
 import { BoardContext } from "../../contexts/BoardContext";
-import { BoardActionType } from "../../reducers/BoardReducer";
 import { Board, Bucket, generateId } from "../../Types";
 
 const BoardPage = () => {
-  const { boards, boardDispatch } = useContext(BoardContext);
+  const { boards } = useContext(BoardContext);
   const { id } = useParams();
   const isNew = id && id === "new";
   const [board, setBoard] = useState<Board>();
@@ -21,7 +20,7 @@ const BoardPage = () => {
       setBoard({ id: generateId(), name: "", description: "" } as Board);
     } else {
       const boardId = Number(id);
-      const existingBoard = boards.find((board) => board.id === boardId);
+      const existingBoard = boards?.find((board) => board.id === boardId);
       setBoard(existingBoard);
       setBuckets(existingBoard?.buckets);
     }
@@ -30,10 +29,10 @@ const BoardPage = () => {
   const addBucket = (name: string) => {
     const newBucket = { id: generateId(), name, tasks: [] } as Bucket;
 
-    boardDispatch({
-      type: BoardActionType.AddBucket,
-      payload: { boardId: Number(id), bucket: newBucket },
-    });
+    // boardDispatch({
+    //   type: BoardActionType.AddBucket,
+    //   payload: { boardId: Number(id), bucket: newBucket },
+    // });
   };
 
   return (

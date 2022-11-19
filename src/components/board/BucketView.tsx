@@ -1,7 +1,6 @@
 import { useContext, useState } from "react";
 import { BsPlus } from "react-icons/bs";
 import { BoardContext } from "../../contexts/BoardContext";
-import { BoardActionType } from "../../reducers/BoardReducer";
 import { Bucket, generateId, Task } from "../../Types";
 
 interface BucketProps {
@@ -16,10 +15,10 @@ const BucketView = ({ bucket, boardId }: BucketProps) => {
   const { boards } = useContext(BoardContext);
 
   const updateBucketName = (name: string) => {
-    boardDispatch({
-      type: BoardActionType.UpdateBucket,
-      payload: { boardId, bucketId: bucket.id, name },
-    });
+    // boardDispatch({
+    //   type: BoardActionType.UpdateBucket,
+    //   payload: { boardId, bucketId: bucket.id, name },
+    // });
   };
 
   const addTaskToBucket = () => {
@@ -29,26 +28,26 @@ const BucketView = ({ bucket, boardId }: BucketProps) => {
       complete: false,
     } as Task;
 
-    boardDispatch({
-      type: BoardActionType.AddTask,
-      payload: { boardId, bucketId: bucket.id, task },
-    });
+    // boardDispatch({
+    //   type: BoardActionType.AddTask,
+    //   payload: { boardId, bucketId: bucket.id, task },
+    // });
     setNewTask("");
   };
 
   const removeTaskFromBucket = (taskId: number) => {
-    boardDispatch({
-      type: BoardActionType.RemoveTask,
-      payload: { boardId, bucketId: bucket.id, taskId },
-    });
+    // boardDispatch({
+    //   type: BoardActionType.RemoveTask,
+    //   payload: { boardId, bucketId: bucket.id, taskId },
+    // });
   };
 
   const removeBucketFromBoard = () => {
     console.log("removing bucket");
-    boardDispatch({
-      type: BoardActionType.RemoveBucket,
-      payload: { boardId, bucketId: bucket.id },
-    });
+    // boardDispatch({
+    //   type: BoardActionType.RemoveBucket,
+    //   payload: { boardId, bucketId: bucket.id },
+    // });
   };
 
   return (

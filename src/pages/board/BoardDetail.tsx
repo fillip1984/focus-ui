@@ -1,12 +1,11 @@
 import { useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Input from "../../components/form/Input";
 import { BoardContext } from "../../contexts/BoardContext";
 import { Board, generateId } from "../../Types";
 
 const BoardDetail = () => {
-  const { boards, addBoard, updateBoard } = useContext(BoardContext);
+  const { findBoardById, addBoard, updateBoard } = useContext(BoardContext);
   const { id } = useParams();
   const isNew = id && id === "new";
   // We can use useState to set state but for now I'm using the defaultValues from react-hook-form
@@ -26,14 +25,8 @@ const BoardDetail = () => {
     formState: { errors },
   } = useForm<Board>({
     defaultValues: {
-      name: isNew
-        ? ""
-        : boards?.find((existingBoard) => existingBoard.id === Number(id))
-            ?.name,
-      description: isNew
-        ? ""
-        : boards?.find((existingBoard) => existingBoard.id === Number(id))
-            ?.description,
+      name: isNew ? "" : findBoardById(Number(id))?.name,
+      description: isNew ? "" : findBoardById(Number(id))?.description,
     },
   });
   const onSubmit: SubmitHandler<Board> = (formData) => {
