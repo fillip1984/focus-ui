@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { BsPlus } from "react-icons/bs";
 import { BoardContext } from "../../contexts/BoardContext";
 import { Bucket, generateId } from "../../Types";
@@ -10,6 +10,7 @@ interface BucketProps {
 
 const BucketView = ({ boardId, bucket }: BucketProps) => {
   const [newTask, setNewTask] = useState("");
+  const newTaskRef = useRef<HTMLInputElement>(null);
 
   const { addTask, removeTask, removeBucket } = useContext(BoardContext);
 
@@ -18,6 +19,16 @@ const BucketView = ({ boardId, bucket }: BucketProps) => {
     //   type: BoardActionType.UpdateBucket,
     //   payload: { boardId, bucketId: bucket.id, name },
     // });
+  };
+
+  const handleAddTask = () => {
+    addTask(boardId, bucket.id, {
+      id: generateId(),
+      name: newTask,
+      complete: false,
+    });
+    setNewTask("");
+    newTaskRef?.current?.focus();
   };
 
   return (
@@ -58,15 +69,10 @@ const BucketView = ({ boardId, bucket }: BucketProps) => {
           className="w-full border-b-2 border-b-white bg-transparent focus:border-transparent focus:border-b-inherit focus:ring-0"
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
+          ref={newTaskRef}
         />
         <button
-          onClick={() =>
-            addTask(boardId, bucket.id, {
-              id: generateId(),
-              name: newTask,
-              complete: false,
-            })
-          }
+          onClick={handleAddTask}
           type="button"
           className="h-8 w-8 rounded border border-white text-2xl">
           <BsPlus />

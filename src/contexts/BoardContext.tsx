@@ -103,15 +103,14 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
   };
 
   const removeBucket = (boardId: number, bucketId: number) => {
-    const board = boards.find((board) => board.id === boardId);
-    //TODO: throw error or honor idempotence and return success here?
-    if (!board) {
-      throw new Error(`Unable to find board with id: ${boardId}`);
-    }
-    board.buckets = board?.buckets?.filter((bucket) => bucket.id !== bucketId);
+    const boardToUpdate = findBoardById(boardId);
+    boardToUpdate.buckets = boardToUpdate.buckets?.filter(
+      (bucket) => bucket.id !== bucketId
+    );
+
     setBoards(
       boards.map((board) => {
-        if (board.id === boardId) {
+        if (board.id === boardToUpdate.id) {
           return { ...board, buckets: board.buckets };
         } else {
           return board;
@@ -144,9 +143,8 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
   };
 
   const addTask = (boardId: number, bucketId: number, task: Task) => {
-    console.log("adding task");
-    const boardtoUpdate = findBoardById(boardId);
-    const bucketToUpdate = findBucketById(boardtoUpdate, bucketId);
+    const boardToUpdate = findBoardById(boardId);
+    const bucketToUpdate = findBucketById(boardToUpdate, bucketId);
     if (!bucketToUpdate.tasks) {
       bucketToUpdate.tasks = [];
     }
@@ -154,15 +152,8 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
 
     setBoards(
       boards.map((board) => {
-        if (board.id === boardtoUpdate.id) {
-          console.log("updating board for addition");
-          if (!board.buckets) {
-            board.buckets = [];
-          }
-          return {
-            ...board,
-            buckets: [...board.buckets, bucketToUpdate],
-          };
+        if (board.id === boardToUpdate.id) {
+          return boardToUpdate;
         } else {
           return board;
         }
@@ -171,28 +162,16 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
   };
 
   const removeTask = (boardId: number, bucketId: number, taskId: number) => {
-    console.log("removing task");
     const boardToUpdate = findBoardById(boardId);
     const bucketToUpdate = findBucketById(boardToUpdate, bucketId);
     bucketToUpdate.tasks = bucketToUpdate.tasks?.filter(
       (task) => task.id !== taskId
     );
-    // boardToUpdate.buckets = [
-    //   ...(boardToUpdate.buckets as Bucket[]),
-    //   bucketToUpdate,
-    // ];
 
     setBoards(
       boards.map((board) => {
         if (board.id === boardToUpdate.id) {
-          console.log("updating board for reduction");
-          if (!board.buckets) {
-            board.buckets = [];
-          }
-          return {
-            ...board,
-            buckets: [...board.buckets, bucketToUpdate],
-          };
+          return boardToUpdate;
         } else {
           return board;
         }
