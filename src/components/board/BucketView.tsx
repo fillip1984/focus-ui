@@ -12,12 +12,8 @@ const BucketView = ({ boardId, bucket }: BucketProps) => {
   const [newTask, setNewTask] = useState("");
   const newTaskRef = useRef<HTMLInputElement>(null);
 
-  const { addTask, removeTask, removeBucket, updateBucket } =
+  const { addTask, removeTask, removeBucket, updateBucket, updateTask } =
     useContext(BoardContext);
-
-  const updateBucketName = (name: string) => {
-    updateBucket(boardId, bucket.id, { ...bucket, name });
-  };
 
   const handleAddTask = () => {
     addTask(boardId, bucket.id, {
@@ -31,36 +27,52 @@ const BucketView = ({ boardId, bucket }: BucketProps) => {
 
   return (
     <div className="new-bucket flex w-[350px] flex-col items-center justify-between rounded-lg border border-white p-2">
-      <div className="flex w-full justify-between p-2">
-        <input
-          type="text"
-          defaultValue={bucket.name}
-          // onChange={(e) => setBucketName(e.target.value)}
-          onBlur={(e) => updateBucketName(e.target.value)}
-          className="border-b-2 border-b-white bg-transparent focus:border-transparent focus:border-b-inherit focus:ring-0"
-        />
-        <button
-          type="button"
-          className="pl-4 text-2xl hover:text-red-400"
-          onClick={() => removeBucket(boardId, bucket.id)}>
-          X
-        </button>
-      </div>
+      <div className="w-full">
+        <div className="mb-2 flex w-full justify-between p-2">
+          <input
+            type="text"
+            defaultValue={bucket.name}
+            onBlur={(e) =>
+              updateBucket(boardId, bucket.id, {
+                ...bucket,
+                name: e.target.value,
+              })
+            }
+            className="border-b-2 border-b-white bg-transparent focus:border-transparent focus:border-b-inherit focus:ring-0"
+          />
+          <button
+            type="button"
+            className="pl-4 text-2xl hover:text-red-400"
+            onClick={() => removeBucket(boardId, bucket.id)}>
+            X
+          </button>
+        </div>
 
-      <div className="flex w-full flex-col gap-2">
-        {bucket.tasks?.map((task) => (
-          <div
-            key={task.id}
-            className="flex w-full justify-between rounded border p-3">
-            <span>{task.name}</span>
-            <button
-              type="button"
-              className="hover:text-red-400"
-              onClick={() => removeTask(boardId, bucket.id, task.id)}>
-              X
-            </button>
-          </div>
-        ))}
+        <div className="flex w-full flex-col gap-2">
+          {bucket.tasks?.map((task) => (
+            <div
+              key={task.id}
+              className="flex w-full justify-between rounded border p-3">
+              <input
+                type="text"
+                defaultValue={task.name}
+                onBlur={(e) =>
+                  updateTask(boardId, bucket.id, task.id, {
+                    ...task,
+                    name: e.target.value,
+                  })
+                }
+                className="border-b-2 border-b-white bg-transparent focus:border-transparent focus:border-b-inherit focus:ring-0"
+              />
+              <button
+                type="button"
+                className="hover:text-red-400"
+                onClick={() => removeTask(boardId, bucket.id, task.id)}>
+                X
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="my-2 flex w-full items-center gap-2">

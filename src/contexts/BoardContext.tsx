@@ -66,6 +66,7 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
   //     })
   //   );
   // };
+
   const addBucket = (boardId: number, bucket: Bucket) => {
     setBoards(
       boards.map((board) => {
