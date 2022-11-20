@@ -10,7 +10,7 @@ interface BoardContextProps {
   findBoardById: (id: number | string | undefined) => Board;
   addBoard: (board: Board) => void;
   removeBoard: (id: number) => void;
-  updateBoard: (id: number, fieldsToUpdate: Partial<Board>) => void;
+  // updateBoard: (id: number, fieldsToUpdate: Partial<Board>) => void;
   addBucket: (boardId: number, bucket: Bucket) => void;
   removeBucket: (boardId: number, bucketId: number) => void;
   updateBucket: (
@@ -50,40 +50,22 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
     }
   };
 
-  const findBucketById = (board: Board | number, bucketId: number) => {
-    if (typeof board === "number") {
-      board = findBoardById(board);
-    }
-
-    const bucketCandidate = board.buckets?.find(
-      (bucket) => bucket.id === bucketId
-    );
-    if (bucketCandidate) {
-      return bucketCandidate;
-    } else {
-      throw new Error(
-        `Unable to find bucket with id: ${bucketId} on board: ${board}`
-      );
-    }
-  };
-
   const addBoard = (board: Board) => setBoards([...boards, board]);
 
   const removeBoard = (id: number) =>
     setBoards(boards.filter((board) => board.id !== id));
 
-  const updateBoard = (id: number, fieldsToUpdate: Partial<Board>) => {
-    setBoards(
-      boards.map((board) => {
-        if (board.id === id) {
-          return { ...board, ...fieldsToUpdate };
-        } else {
-          return board;
-        }
-      })
-    );
-  };
-
+  // const updateBoard = (id: number, fieldsToUpdate: Partial<Board>) => {
+  //   setBoards(
+  //     boards.map((board) => {
+  //       if (board.id === id) {
+  //         return { ...board, ...fieldsToUpdate };
+  //       } else {
+  //         return board;
+  //       }
+  //     })
+  //   );
+  // };
   const addBucket = (boardId: number, bucket: Bucket) => {
     setBoards(
       boards.map((board) => {
@@ -103,15 +85,13 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
   };
 
   const removeBucket = (boardId: number, bucketId: number) => {
-    const boardToUpdate = findBoardById(boardId);
-    boardToUpdate.buckets = boardToUpdate.buckets?.filter(
-      (bucket) => bucket.id !== bucketId
-    );
-
     setBoards(
       boards.map((board) => {
-        if (board.id === boardToUpdate.id) {
-          return { ...board, buckets: board.buckets };
+        if (board.id === boardId) {
+          return {
+            ...board,
+            buckets: board.buckets?.filter((bucket) => bucket.id !== bucketId),
+          };
         } else {
           return board;
         }
@@ -124,17 +104,19 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
     bucketId: number,
     fieldsToUpdate: Partial<Bucket>
   ) => {
-    const boardToUpdate = findBoardById(boardId);
-    let bucketToUpdate = findBucketById(boardToUpdate, bucketId);
-    bucketToUpdate = { ...bucketToUpdate, ...fieldsToUpdate };
-
     setBoards(
       boards.map((board) => {
         if (board.id === boardId) {
-          if (!board.buckets) {
-            board.buckets = [];
-          }
-          return { ...board, buckets: [...board.buckets, bucketToUpdate] };
+          return {
+            ...board,
+            buckets: board.buckets?.map((bucket) => {
+              if (bucket.id === bucketId) {
+                return { ...bucket, ...fieldsToUpdate };
+              } else {
+                return bucket;
+              }
+            }),
+          };
         } else {
           return board;
         }
@@ -143,17 +125,22 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
   };
 
   const addTask = (boardId: number, bucketId: number, task: Task) => {
-    const boardToUpdate = findBoardById(boardId);
-    const bucketToUpdate = findBucketById(boardToUpdate, bucketId);
-    if (!bucketToUpdate.tasks) {
-      bucketToUpdate.tasks = [];
-    }
-    bucketToUpdate.tasks.push(task);
-
     setBoards(
       boards.map((board) => {
-        if (board.id === boardToUpdate.id) {
-          return boardToUpdate;
+        if (board.id === boardId) {
+          return {
+            ...board,
+            buckets: board.buckets?.map((bucket) => {
+              if (bucket.id === bucketId) {
+                return {
+                  ...bucket,
+                  tasks: [...(bucket.tasks as Task[]), task],
+                };
+              } else {
+                return bucket;
+              }
+            }),
+          };
         } else {
           return board;
         }
@@ -162,16 +149,22 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
   };
 
   const removeTask = (boardId: number, bucketId: number, taskId: number) => {
-    const boardToUpdate = findBoardById(boardId);
-    const bucketToUpdate = findBucketById(boardToUpdate, bucketId);
-    bucketToUpdate.tasks = bucketToUpdate.tasks?.filter(
-      (task) => task.id !== taskId
-    );
-
     setBoards(
       boards.map((board) => {
-        if (board.id === boardToUpdate.id) {
-          return boardToUpdate;
+        if (board.id === boardId) {
+          return {
+            ...board,
+            buckets: board.buckets?.map((bucket) => {
+              if (bucket.id === bucketId) {
+                return {
+                  ...bucket,
+                  tasks: bucket.tasks?.filter((task) => task.id !== taskId),
+                };
+              } else {
+                return bucket;
+              }
+            }),
+          };
         } else {
           return board;
         }
@@ -185,35 +178,28 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
     taskId: number,
     fieldsToUpdate: Partial<Task>
   ) => {
-    const board = boards.find((board) => board.id === boardId);
-    if (!board) {
-      throw new Error(`Unable to find board with id: ${boardId}`);
-    }
-
-    const bucket = board.buckets?.find((bucket) => bucket.id === bucketId);
-    if (!bucket) {
-      throw new Error(
-        `Unable to find bucket with id: ${bucketId} on board with id: ${boardId}`
-      );
-    }
-
-    bucket.tasks = bucket.tasks?.map((task) => {
-      if (task.id === taskId) {
-        return { ...task, ...fieldsToUpdate };
-      } else {
-        return task;
-      }
-    });
-
     setBoards(
       boards.map((board) => {
         if (board.id === boardId) {
-          const buckets = board.buckets as Bucket[];
-          const updatedBoard = {
+          return {
             ...board,
-            buckets: [...buckets, bucket],
+            buckets: board.buckets?.map((bucket) => {
+              if (bucket.id === bucketId) {
+                return {
+                  ...bucket,
+                  tasks: bucket.tasks?.map((task) => {
+                    if (task.id === taskId) {
+                      return { ...task, ...fieldsToUpdate };
+                    } else {
+                      return task;
+                    }
+                  }),
+                };
+              } else {
+                return bucket;
+              }
+            }),
           };
-          return updatedBoard;
         } else {
           return board;
         }
@@ -228,7 +214,7 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
         findBoardById,
         addBoard,
         removeBoard,
-        updateBoard,
+        // updateBoard,
         addBucket,
         removeBucket,
         updateBucket,
