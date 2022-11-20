@@ -8,6 +8,7 @@ const BoardDetail = () => {
   const { findBoardById, addBoard, updateBoard } = useContext(BoardContext);
   const { id } = useParams();
   const isNew = id && id === "new";
+
   // We can use useState to set state but for now I'm using the defaultValues from react-hook-form
   // const [board] = useState<Board>(
   //   isNew

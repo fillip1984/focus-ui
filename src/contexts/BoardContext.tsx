@@ -10,7 +10,7 @@ interface BoardContextProps {
   findBoardById: (id: number | string | undefined) => Board;
   addBoard: (board: Board) => void;
   removeBoard: (id: number) => void;
-  // updateBoard: (id: number, fieldsToUpdate: Partial<Board>) => void;
+  updateBoard: (id: number, fieldsToUpdate: Partial<Board>) => void;
   addBucket: (boardId: number, bucket: Bucket) => void;
   removeBucket: (boardId: number, bucketId: number) => void;
   updateBucket: (
@@ -55,17 +55,17 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
   const removeBoard = (id: number) =>
     setBoards(boards.filter((board) => board.id !== id));
 
-  // const updateBoard = (id: number, fieldsToUpdate: Partial<Board>) => {
-  //   setBoards(
-  //     boards.map((board) => {
-  //       if (board.id === id) {
-  //         return { ...board, ...fieldsToUpdate };
-  //       } else {
-  //         return board;
-  //       }
-  //     })
-  //   );
-  // };
+  const updateBoard = (id: number, fieldsToUpdate: Partial<Board>) => {
+    setBoards(
+      boards.map((board) => {
+        if (board.id === id) {
+          return { ...board, ...fieldsToUpdate };
+        } else {
+          return board;
+        }
+      })
+    );
+  };
 
   const addBucket = (boardId: number, bucket: Bucket) => {
     setBoards(
@@ -215,7 +215,7 @@ const BoardContextProvider = ({ children }: BoardContextProviderProps) => {
         findBoardById,
         addBoard,
         removeBoard,
-        // updateBoard,
+        updateBoard,
         addBucket,
         removeBucket,
         updateBucket,
