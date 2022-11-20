@@ -16,13 +16,15 @@ const BucketView = ({ boardId, bucket }: BucketProps) => {
     useContext(BoardContext);
 
   const handleAddTask = () => {
-    addTask(boardId, bucket.id, {
-      id: generateId(),
-      name: newTask,
-      complete: false,
-    });
-    setNewTask("");
-    newTaskRef?.current?.focus();
+    if (newTask) {
+      addTask(boardId, bucket.id, {
+        id: generateId(),
+        name: newTask,
+        complete: false,
+      });
+      setNewTask("");
+      newTaskRef?.current?.focus();
+    }
   };
 
   return (
@@ -32,12 +34,17 @@ const BucketView = ({ boardId, bucket }: BucketProps) => {
           <input
             type="text"
             defaultValue={bucket.name}
-            onBlur={(e) =>
-              updateBucket(boardId, bucket.id, {
-                ...bucket,
-                name: e.target.value,
-              })
-            }
+            onBlur={(e) => {
+              if (e.target.value.trim().length > 0) {
+                updateBucket(boardId, bucket.id, {
+                  ...bucket,
+                  name: e.target.value,
+                });
+              } else {
+                // set back previous value if none was given
+                e.target.value = bucket.name;
+              }
+            }}
             className="border-b-2 border-b-white bg-transparent focus:border-transparent focus:border-b-inherit focus:ring-0"
           />
           <button

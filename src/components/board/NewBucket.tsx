@@ -9,8 +9,10 @@ const NewBucket = ({ handleAddBucket }: NewBucketProps) => {
   const [newBucket, setNewBucket] = useState("");
 
   const handleAddBucketClick = () => {
-    handleAddBucket(newBucket);
-    setNewBucket("");
+    if (newBucket) {
+      handleAddBucket(newBucket);
+      setNewBucket("");
+    }
   };
 
   return (
